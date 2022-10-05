@@ -5,6 +5,7 @@ from .views import (
     CategoriesViewSet,
     GenresViewSet,
     TitleViewSet,
+    RegistrationAPIView,
 )
 
 
@@ -14,5 +15,6 @@ router.register(r'v1/genres', GenresViewSet)
 router.register(r'v1/titles', TitleViewSet)
 
 urlpatterns = [
+    path('v1/users/', RegistrationAPIView.as_view()),
     path('', include(router.urls)),
 ]
