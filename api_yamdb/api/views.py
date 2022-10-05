@@ -9,6 +9,8 @@ from reviews.models import (
     Categories,
     Genres,
     Title,
+    Review,
+    Comment,
 )
 
 from .serializers import (

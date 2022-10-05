@@ -4,7 +4,12 @@ from reviews.models import (
     Categories,
     Genres,
     Title,
+<<<<<<< HEAD
     User
+=======
+    Review,
+    Comment
+>>>>>>> 3bc6714 (two)
 )
 
 
@@ -26,6 +31,7 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+<<<<<<< HEAD
 class RegistrationSerializer(serializers.ModelSerializer):
     """ Сериализация регистрации пользователя и создания нового. """
     password = serializers.CharField(
@@ -41,3 +47,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+=======
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+>>>>>>> 3bc6714 (two)
