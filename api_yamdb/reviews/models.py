@@ -105,9 +105,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return token.decode('utf-8')
 
 
-# Models for Categories, Genres, Title
-
-
 class Categories(models.Model):
     name = models.CharField(
         max_length=256,
@@ -138,7 +135,7 @@ class Title(models.Model):
 
     category = models.ForeignKey(
         Categories,
-            on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL,
         related_name='titles',
         null=True,
     )
@@ -152,10 +149,12 @@ class Title(models.Model):
 
 class Review(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='review'
+        User, on_delete=models.CASCADE,
+        related_name='review'
     )
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='review'
+        Title, on_delete=models.CASCADE,
+        related_name='review'
     )
     score = models.CharField(
         max_length=2,
@@ -164,8 +163,19 @@ class Review(models.Model):
     )
     text = models.TextField()
     pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True
+        'Дата добавления',
+        auto_now_add=True,
+        db_index=True
     )
+
+    class Meta:
+        ordering = ['pub_date']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='unique_review'
+            ),
+        ]
 
     def __str__(self):
         return self.text[:settings.FIRST_SYMBOLS_NUMBER]
@@ -173,14 +183,18 @@ class Review(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comment'
+        User, on_delete=models.CASCADE,
+        related_name='comment'
     )
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name='comment'
+        Review, on_delete=models.CASCADE,
+        related_name='comment'
     )
     text = models.TextField()
     pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True
+        'Дата добавления',
+        auto_now_add=True,
+        db_index=True
     )
 
     def __str__(self):

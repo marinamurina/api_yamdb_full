@@ -1,15 +1,16 @@
 from rest_framework import serializers
+from rest_framework.relations import SlugRelatedField
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
+
 
 from reviews.models import (
     Categories,
     Genres,
     Title,
-<<<<<<< HEAD
-    User
-=======
+    User,
     Review,
     Comment
->>>>>>> 3bc6714 (two)
 )
 
 
@@ -31,7 +32,50 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-<<<<<<< HEAD
+class ReviewSerializer(serializers.ModelSerializer):
+    title = SlugRelatedField(
+        slug_field='title',
+        read_only=True,
+    )
+    author = SlugRelatedField(
+        slug_field='author',
+        read_only=True,
+    )
+
+    def validate(self, data):
+        request = self.context['request']
+        author = request.user
+        title_id = self.context['view'].kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        if request.method == 'POST':
+            if Review.objects.filter(
+                title=title, author=author
+            ).exists:
+                raise ValidationError(
+                    'Вы можете добавить только один отзыв на произведение.'
+                )
+        return data
+
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    review = SlugRelatedField(
+        slug_field='review',
+        read_only=True,
+    )
+    author = SlugRelatedField(
+        slug_field='author',
+        read_only=True,
+    )
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+
 class RegistrationSerializer(serializers.ModelSerializer):
     """ Сериализация регистрации пользователя и создания нового. """
     password = serializers.CharField(
@@ -47,15 +91,3 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
-=======
-class ReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review
-        fields = '__all__'
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = '__all__'
->>>>>>> 3bc6714 (two)
