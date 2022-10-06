@@ -1,29 +1,63 @@
 from rest_framework import serializers
+from django.db.models import Avg
 
 from reviews.models import (
     Categories,
     Genres,
     Title,
-    User
+    User,
+    Review,
 )
 
 
-class CaregoriesSerializer(serializers.ModelSerializer):
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = '__all__'
+        fields = (
+            'name',
+            'slug',
+        )
 
 
 class GenresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genres
-        fields = '__all__'
+        fields = (
+            'name',
+            'slug',
+        )
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = (
+            'id',
+            'name',
+            'year',
+            'rating',
+            'description',
+            'genre',
+            'category',
+        )
+
+    def get_rating(self, obj):
+        """Подсчитываем средний рейтинг произведения из отзывов"""
+
+        rating = obj.review.aggregate(Avg('score'))['score__avg']
+
+        if rating is not None:
+            rating = int(rating)
+
+        return rating
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
