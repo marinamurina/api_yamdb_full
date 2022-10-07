@@ -6,10 +6,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from rest_framework import viewsets
+from rest_framework import filters
 
 # Свой клас для разделения доступа по ролям
-from .permissions import CustomPermissions
-
+from .permissions import AdminOrReadOnly
 
 from reviews.models import (
     Categories,
@@ -30,28 +30,26 @@ from .serializers import (
 )
 
 
-class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-    permission_classes = (CustomPermissions,)
-
-
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = (CustomPermissions,)
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class GenresViewSet(viewsets.ModelViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
-    permission_classes = (CustomPermissions,)
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = (CustomPermissions,)
+    permission_classes = (AdminOrReadOnly,)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
