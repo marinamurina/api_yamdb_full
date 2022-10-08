@@ -122,18 +122,19 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    """ Сериализация регистрации пользователя и создания нового. """
-    password = serializers.CharField(
-        max_length=128,
-        min_length=8,
-        write_only=True
-    )
-    token = serializers.CharField(max_length=255, read_only=True)
+class RegisterSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True, required=True,)
 
     class Meta:
         model = User
-        fields = ['email', 'username', 'password', 'token']
+        fields = ('email', 'username', 'password')
+
+    def validate(self, attrs):
+        if attrs['username'] == 'me':
+            raise serializers.ValidationError("Uncorrect username")
+        return attrs
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
