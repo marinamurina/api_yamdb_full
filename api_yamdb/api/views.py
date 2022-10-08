@@ -1,12 +1,11 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import viewsets
 from rest_framework import filters
-
 # Свой клас для разделения доступа по ролям
 from .permissions import AdminOrReadOnly
 
@@ -16,6 +15,7 @@ from reviews.models import (
     Title,
     Review,
     Comment,
+    User,
 )
 
 from .serializers import (
@@ -26,6 +26,7 @@ from .serializers import (
     RegisterSerializer,
     ReviewSerializer,
     CommentSerializer,
+    UserSerializer,
 )
 
 
@@ -99,3 +100,11 @@ class RegisterAPIView(GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    # permission_classes = (IsAdminUser, )
+    queryset = User.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
