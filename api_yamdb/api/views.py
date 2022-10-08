@@ -3,9 +3,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework.mixins import UpdateModelMixin
 # Свой клас для разделения доступа по ролям
 from .permissions import AdminOrReadOnly
 
@@ -27,7 +28,15 @@ from .serializers import (
     ReviewSerializer,
     CommentSerializer,
     UserSerializer,
+    UserChangeSerializer,
 )
+
+
+class GetRetrieveViewSet(
+    RetrieveAPIView,
+    UpdateModelMixin,
+):
+    pass
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -105,6 +114,20 @@ class RegisterAPIView(GenericAPIView):
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     # permission_classes = (IsAdminUser, )
+    permission_classes = (AllowAny,)
     queryset = User.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
+    lookup_field = 'username'
+
+
+class UserChangeAPIView(GetRetrieveViewSet):
+    serializer_class = UserChangeSerializer
+    queryset = User.objects.all()
+
+    def get_queryset(self):
+        return User.objects.filter(
+            user=get_object_or_404(
+                User, id=self.request.user
+            )
+        )
