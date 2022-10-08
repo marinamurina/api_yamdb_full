@@ -2,7 +2,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import (
-    AbstractBaseUser, UserManager, PermissionsMixin
+    AbstractBaseUser, UserManager, PermissionsMixin, AbstractUser
 )
 from django.utils.translation import gettext_lazy as _
 from django.db import models
@@ -81,6 +81,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             'unique': _("A user with that username already exists."),
         },
     )
+    bio = models.TextField('Биография', blank=True,) 
+    first_name = models.CharField(_('first name'), max_length=30, blank=True)
+    last_name = models.CharField(_('last name'), max_length=150, blank=True)
     email = models.EmailField(_('email address'), blank=False, unique=True)
     is_staff = models.BooleanField(
         _('staff status'),
