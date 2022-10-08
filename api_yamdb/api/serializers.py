@@ -17,6 +17,29 @@ from reviews.models import (
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    title = SlugRelatedField(
+        slug_field='title',
+        read_only=True,
+    )
+    author = SlugRelatedField(
+        slug_field='author',
+        read_only=True,
+    )
+
+    def validate(self, data):
+        request = self.context['request']
+        author = request.user
+        title_id = self.context['view'].kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        if request.method == 'POST':
+            if Review.objects.filter(
+                title=title, author=author
+            ).exists:
+                raise ValidationError(
+                    'Вы можете добавить только один отзыв на произведение.'
+                )
+        return data
+
     class Meta:
         model = Review
         fields = '__all__'
@@ -68,7 +91,7 @@ class TitleSerializer(serializers.ModelSerializer):
         )
 
     def get_rating(self, obj):
-        """Подсчитываем средний рейтинг произведения из отзывов"""
+        """Подсчитываем средний рейтинг произведения из отзывов."""
 
         rating = obj.review.aggregate(Avg('score'))['score__avg']
 
@@ -76,35 +99,6 @@ class TitleSerializer(serializers.ModelSerializer):
             rating = int(rating)
 
         return rating
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    title = SlugRelatedField(
-        slug_field='title',
-        read_only=True,
-    )
-    author = SlugRelatedField(
-        slug_field='author',
-        read_only=True,
-    )
-
-    def validate(self, data):
-        request = self.context['request']
-        author = request.user
-        title_id = self.context['view'].kwargs.get('title_id')
-        title = get_object_or_404(Title, id=title_id)
-        if request.method == 'POST':
-            if Review.objects.filter(
-                title=title, author=author
-            ).exists:
-                raise ValidationError(
-                    'Вы можете добавить только один отзыв на произведение.'
-                )
-        return data
-
-    class Meta:
-        model = Review
-        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -122,9 +116,20 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+"""  Вариант Марины
+class RegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+    token = serializers.CharField(max_length=255, read_only=True)
+"""
+
 class RegisterSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True, required=True,)
+
 
     class Meta:
         model = User
@@ -137,4 +142,3 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
-

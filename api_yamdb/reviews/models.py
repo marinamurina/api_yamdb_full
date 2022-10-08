@@ -145,7 +145,7 @@ class Title(models.Model):
 
     category = models.ForeignKey(
         Categories,
-            on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL,
         related_name='titles',
         null=True,
     )

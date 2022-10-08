@@ -8,7 +8,10 @@ from rest_framework import viewsets
 from rest_framework import filters
 
 # Свой клас для разделения доступа по ролям
-from .permissions import AdminOrReadOnly
+from .permissions import (
+    AdminOrReadOnly,
+    IsAdminModeratorOwnerOrReadOnly
+)
 
 from reviews.models import (
     Categories,
@@ -53,7 +56,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    # permission_classes =
+    permission_classes = [IsAdminModeratorOwnerOrReadOnly, ]
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
@@ -70,7 +73,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    # permission_classes =
+    permission_classes = [IsAdminModeratorOwnerOrReadOnly, ]
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')
