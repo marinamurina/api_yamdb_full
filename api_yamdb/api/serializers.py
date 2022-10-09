@@ -1,4 +1,3 @@
-from unicodedata import category
 from rest_framework import serializers
 
 from django.db.models import Avg
@@ -15,7 +14,6 @@ from reviews.models import (
     User,
     Review,
     Comment,
-    TitleGenres,
 )
 
 
