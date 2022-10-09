@@ -1,4 +1,3 @@
-from gc import get_objects
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from rest_framework import status
@@ -18,6 +17,7 @@ from .permissions import AdminOrReadOnly
 from rest_framework.decorators import action, api_view, permission_classes
 from django.conf import settings
 import uuid
+from django.db import IntegrityError
 
 from reviews.models import (
     Categories,
@@ -32,9 +32,7 @@ from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
     ReviewSerializer,
-    ShowTitlesSerializer,
-    CreateUpdateTitleSerializer,
-    RegisterSerializer,
+    TitleSerializer,
     ReviewSerializer,
     CommentSerializer,
     UserSerializer,
@@ -61,16 +59,8 @@ class GenresViewSet(viewsets.ModelViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = CreateUpdateTitleSerializer
+    serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
-
-    def get_serializer_class(self):
-        """Переопределяем сериализатор для показа"""
-        if self.action == 'list' or self.action == 'retrieve':
-            print(self.action)
-            return ShowTitlesSerializer
-
-        return CreateUpdateTitleSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -116,11 +106,11 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
-
     @action(methods=['GET', 'PATCH'],
             detail=False,
             permission_classes=[IsAuthenticated],
             url_path='me')
+
     def user_profile(self, request):
         user = get_object_or_404(User, username=request.user.username)
         if request.method == 'PATCH':
@@ -167,4 +157,4 @@ def get_token(request):
             'token': str(refresh.access_token)
         }
         return Response(tokens, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
