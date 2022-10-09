@@ -154,7 +154,7 @@ def get_token(request):
     if user.confirmation_code == confirmation_code:
         refresh = RefreshToken.for_user(user)
         tokens = {
-            'access': str(refresh.access_token)
+            'token': str(refresh.access_token)
         }
         return Response(tokens, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
