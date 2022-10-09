@@ -157,7 +157,7 @@ def registration(request):
 @permission_classes([AllowAny])
 def get_token(request):
     serializer = TokenSerializer(data=request.data)
-    serializer.is_valid()
+    serializer.is_valid(raise_exception=True)
     username = serializer.validated_data.get('username')
     confirmation_code = serializer.validated_data.get('confirmation_code')
     user = get_object_or_404(User, username=username)
@@ -167,4 +167,4 @@ def get_token(request):
             'token': str(refresh.access_token)
         }
         return Response(tokens, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
