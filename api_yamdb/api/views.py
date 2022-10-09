@@ -18,7 +18,6 @@ from .permissions import AdminOrReadOnly
 from rest_framework.decorators import action, api_view, permission_classes
 from django.conf import settings
 import uuid
-from django.db import IntegrityError
 
 from reviews.models import (
     Categories,
