@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from django.db.models import Avg
+from rest_framework.validators import UniqueValidator
 
 from rest_framework.relations import SlugRelatedField
 from rest_framework.exceptions import ValidationError
@@ -132,7 +133,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['username'] == 'me':
-            raise serializers.ValidationError("Uncorrect username")
+            raise serializers.ValidationError("У пользователя не может быть имени me")
         return attrs
 
     def create(self, validated_data):
@@ -150,7 +151,7 @@ class UserSerializer(serializers.ModelSerializer):
             'bio',
             'role',
         )
-
+        read_only_field = ('role')
 
 class UserChangeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -163,4 +164,32 @@ class UserChangeSerializer(serializers.ModelSerializer):
             'bio',
             'role',
         )
+        read_only_field = ('role')
 
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[
+            UniqueValidator(queryset=User.objects.all(),
+                            message='Такой имеил уже есть в базе')
+        ]
+    )
+    username = serializers.CharField(
+        required=True,
+        validators=[
+            UniqueValidator(queryset=User.objects.all(),
+                            message='Такое имя уже есть в базе')
+        ]
+    )
+
+    def validate_username(self, value):
+        if value.lower() == 'me':
+            raise serializers.ValidationError(
+                "У пользователя не может быть имени me"
+            )
+        return value
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
