@@ -117,61 +117,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-"""  Вариант Марины
-class RegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        max_length=128,
-        min_length=8,
-        write_only=True
-    )
-    token = serializers.CharField(max_length=255, read_only=True)
-"""
-
-class RegisterSerializer(serializers.ModelSerializer):
-
-    password = serializers.CharField(write_only=True, required=True,)
-
-
-    class Meta:
-        model = User
-        fields = ('email', 'username', 'password')
-
-    def validate(self, attrs):
-        if attrs['username'] == 'me':
-            raise serializers.ValidationError("У пользователя не может быть имени me")
-        return attrs
-
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'username',
-            'email',
-            'first_name',
-            'last_name',
-            'bio',
-            'role',
-        )
-        read_only_field = ('role')
-
-class UserChangeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'username',
-            'email',
-            'first_name',
-            'last_name',
-            'bio',
-            'role',
-        )
-        read_only_field = ('role')
-
-class EmailSerializer(serializers.Serializer):
+class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField(
         required=True,
         validators=[
@@ -187,14 +133,29 @@ class EmailSerializer(serializers.Serializer):
         ]
     )
 
-    def validate_username(self, value):
-        if value.lower() == 'me':
-            raise serializers.ValidationError(
-                "У пользователя не может быть имени me"
-            )
-        return value
+    def validate(self, attrs):
+        if attrs['username'] == 'me':
+            raise serializers.ValidationError("Uncorrect username")
+        return attrs
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
 
 
-class TokenSerializer(serializers.ModelSerializer):
+class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role',
+        )
+        read_only_field = ('role')

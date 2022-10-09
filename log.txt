@@ -1,0 +1,21 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.4, pytest-6.2.4, py-1.11.0, pluggy-0.13.1 -- F:\Dev\api\kittygram_backend\venv\Scripts\python.exe
+django: settings: api_yamdb.settings (from ini)
+rootdir: F:\Dev\Group_project\api_yamdb, configfile: pytest.ini, testpaths: tests/
+plugins: django-4.4.0, pythonpath-0.7.3
+collecting ... collected 53 items
+
+tests/test_00_user_registration.py::Test00UserRegistration::test_00_nodata_signup PASSED [  1%]
+tests/test_00_user_registration.py::Test00UserRegistration::test_00_invalid_data_signup PASSED [  3%]
+tests/test_00_user_registration.py::Test00UserRegistration::test_00_valid_data_user_signup 
+
+============================== warnings summary ===============================
+..\..\api\kittygram_backend\venv\lib\site-packages\django\utils\version.py:6
+  F:\Dev\api\kittygram_backend\venv\lib\site-packages\django\utils\version.py:6: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+    from distutils.version import LooseVersion
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! KeyboardInterrupt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+F:\Python\lib\ntpath.py:679: KeyboardInterrupt
+(to show a full traceback on KeyboardInterrupt use --full-trace)
+======================== 2 passed, 1 warning in 1.32s =========================

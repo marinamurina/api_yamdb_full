@@ -30,7 +30,6 @@ class User(AbstractUser):
         (MODERATOR, 'moderator'),
         (ADMIN, 'admin')
     )
-
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(
         'Роль пользователя',

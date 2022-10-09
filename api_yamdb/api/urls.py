@@ -6,11 +6,11 @@ from .views import (
     GenresViewSet,
     ReviewViewSet,
     TitleViewSet,
-    RegisterAPIView,
     ReviewViewSet,
     CommentViewSet,
     UserViewSet,
-    get_jwt_token,
+    registration,
+    get_token
 )
 
 
@@ -26,7 +26,7 @@ router.register(r'v1/titles', TitleViewSet)
 router.register(r'v1/users', UserViewSet)
 
 urlpatterns = [
-    path('v1/auth/signup/', RegisterAPIView.as_view()),
-    path('v1/auth/token/', get_jwt_token),
+    path('v1/auth/signup/', registration),
+    path('v1/auth/token/', get_token),
     path('', include(router.urls)),
 ]
