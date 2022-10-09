@@ -1,7 +1,11 @@
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    # IsAdminUser,
+)
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import filters
@@ -17,7 +21,7 @@ from .permissions import AdminOrReadOnly
 from rest_framework.decorators import action, api_view, permission_classes
 from django.conf import settings
 import uuid
-from django.db import IntegrityError
+# from django.db import IntegrityError
 
 from reviews.models import (
     Categories,
@@ -114,11 +118,11 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
+
     @action(methods=['GET', 'PATCH'],
             detail=False,
             permission_classes=[IsAuthenticated],
             url_path='me')
-
     def user_profile(self, request):
         user = get_object_or_404(User, username=request.user.username)
         if request.method == 'PATCH':

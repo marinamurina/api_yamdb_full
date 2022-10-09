@@ -15,8 +15,13 @@ from .views import (
 
 
 router = routers.DefaultRouter()
+
+# router.register(r'v1/categories/<slug: slug>/', CategoriesViewSet)
+# router.register(r'v1/genres/<slug: slug>/', GenresViewSet)
+
 router.register(r'v1/categories', CategoriesViewSet)
 router.register(r'v1/genres', GenresViewSet)
+
 
 router.register(r'v1/titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')

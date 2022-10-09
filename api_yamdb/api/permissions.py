@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from reviews.models import User
+# from reviews.models import User
 
 
 class AdminOrReadOnly(permissions.BasePermission):
@@ -7,14 +7,22 @@ class AdminOrReadOnly(permissions.BasePermission):
     и жанров только администраторами."""
 
     def has_permission(self, request, view):
-        # return True
-        return request.method in permissions.SAFE_METHODS
+        if request.user.is_authenticated:
+            return (
+                request.method in permissions.SAFE_METHODS
+                or request.user.is_admin
+            )
+        else:
+            return request.method in permissions.SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
-        return (  # True
-            request.method in permissions.SAFE_METHODS
-            or User.object.get(pk=request.user).role == 'admin'
-        )
+        if request.user.is_authenticated:
+            return (
+                request.method in permissions.SAFE_METHODS
+                or request.user.is_admin
+            )
+        else:
+            return request.method in permissions.SAFE_METHODS
 
 
 class IsAdminModeratorOwnerOrReadOnly(permissions.BasePermission):
