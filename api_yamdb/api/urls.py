@@ -10,6 +10,7 @@ from .views import (
     ReviewViewSet,
     CommentViewSet,
     UserViewSet,
+    get_jwt_token,
 )
 
 
@@ -26,5 +27,6 @@ router.register(r'v1/users', UserViewSet)
 
 urlpatterns = [
     path('v1/auth/signup/', RegisterAPIView.as_view()),
+    path('v1/auth/token/', get_jwt_token),
     path('', include(router.urls)),
 ]
