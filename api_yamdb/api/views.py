@@ -33,7 +33,9 @@ from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
     ReviewSerializer,
-    TitleSerializer,
+    ShowTitlesSerializer,
+    CreateUpdateTitleSerializer,
+    RegisterSerializer,
     ReviewSerializer,
     CommentSerializer,
     UserSerializer,
@@ -60,8 +62,16 @@ class GenresViewSet(viewsets.ModelViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
+    serializer_class = CreateUpdateTitleSerializer
     permission_classes = (AdminOrReadOnly,)
+
+    def get_serializer_class(self):
+        """Переопределяем сериализатор для показа"""
+        if self.action == 'list' or self.action == 'retrieve':
+            print(self.action)
+            return ShowTitlesSerializer
+
+        return CreateUpdateTitleSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -107,11 +117,11 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
+
     @action(methods=['GET', 'PATCH'],
             detail=False,
             permission_classes=[IsAuthenticated],
             url_path='me')
-
     def user_profile(self, request):
         user = get_object_or_404(User, username=request.user.username)
         if request.method == 'PATCH':
