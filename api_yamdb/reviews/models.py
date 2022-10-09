@@ -1,9 +1,8 @@
-from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractUser
 )
-from django.utils.translation import gettext_lazy as _
+# from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 
@@ -100,9 +99,14 @@ class Title(models.Model):
 
     genre = models.ManyToManyField(
         Genres,
-        related_name='titles',
-        blank=True
+        through='TitleGenres',
     )
+
+
+class TitleGenres(models.Model):
+    """Модель для связи жанров и произведений ManyToMany"""
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genres, on_delete=models.CASCADE)
 
 
 class Review(models.Model):

@@ -1,3 +1,4 @@
+from unicodedata import category
 from rest_framework import serializers
 
 from django.db.models import Avg
@@ -14,6 +15,7 @@ from reviews.models import (
     User,
     Review,
     Comment,
+    TitleGenres,
 )
 
 
@@ -53,7 +55,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
             'name',
             'slug',
         )
-        lookup_field = ('slug',)
+        # lookup_field = ('name', 'slug')
 
 
 class GenresSerializer(serializers.ModelSerializer):
@@ -63,27 +65,52 @@ class GenresSerializer(serializers.ModelSerializer):
             'name',
             'slug',
         )
-        lookup_field = ('slug',)
+        # lookup_field = ('name', 'slug')
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class ShowTitlesSerializer(serializers.ModelSerializer):
+    category = CategoriesSerializer(),
+    genre = GenresSerializer(many=True, required=False)
     rating = serializers.SerializerMethodField()
-    
-    category = CategoriesSerializer()
-    """
-    serializers.SlugRelatedField(
+
+    class Meta:
+        model = Title
+        fields = (
+            'id',
+            'name',
+            'year',
+            'rating',
+            'description',
+            'genre',
+            'category',
+        )
+
+    def get_rating(self, obj):
+        """Подсчитываем средний рейтинг произведения из отзывов."""
+        print(obj.category)
+        rating = obj.review.aggregate(Avg('score'))['score__avg']
+
+        if rating is not None:
+            rating = int(rating)
+
+        return rating
+
+
+class CreateUpdateTitleSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+
+    category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Categories.objects.all(),
-        required=True)"""
+        required=True,
+    )
 
-    genre = GenresSerializer(many=True, required=False)
-    """
-    serializers.SlugRelatedField(
+    genre = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Genres.objects.all(),
         many=True,
-        required=True
-    )"""
+        required=False,
+    )
 
     class Meta:
         model = Title
@@ -123,20 +150,9 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-"""  Вариант Марины
-class RegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        max_length=128,
-        min_length=8,
-        write_only=True
-    )
-    token = serializers.CharField(max_length=255, read_only=True)
-"""
-
 class RegisterSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True, required=True,)
-
 
     class Meta:
         model = User
@@ -144,7 +160,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['username'] == 'me':
-            raise serializers.ValidationError("У пользователя не может быть имени me")
+            raise serializers.ValidationError(
+                "У пользователя не может быть имени me"
+            )
         return attrs
 
     def create(self, validated_data):
@@ -164,6 +182,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         read_only_field = ('role')
 
+
 class UserChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -176,6 +195,7 @@ class UserChangeSerializer(serializers.ModelSerializer):
             'role',
         )
         read_only_field = ('role')
+
 
 class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField(
