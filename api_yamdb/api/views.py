@@ -62,6 +62,16 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
 
+<<<<<<< HEAD
+=======
+    def get_serializer_class(self):
+        """Переопределяем сериализатор для показа"""
+        if self.action == 'list' or self.action == 'retrieve':
+            return ShowTitlesSerializer
+
+        return CreateUpdateTitleSerializer
+
+>>>>>>> denis
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
