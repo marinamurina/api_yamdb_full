@@ -32,7 +32,8 @@ from .serializers import (
     CategoriesSerializer,
     GenresSerializer,
     ReviewSerializer,
-    TitleSerializer,
+    ShowTitlesSerializer,
+    CreateUpdateTitleSerializer,
     ReviewSerializer,
     CommentSerializer,
     UserSerializer,
@@ -59,11 +60,9 @@ class GenresViewSet(viewsets.ModelViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
+    serializer_class = CreateUpdateTitleSerializer
     permission_classes = (AdminOrReadOnly,)
 
-<<<<<<< HEAD
-=======
     def get_serializer_class(self):
         """Переопределяем сериализатор для показа"""
         if self.action == 'list' or self.action == 'retrieve':
@@ -71,7 +70,6 @@ class TitleViewSet(viewsets.ModelViewSet):
 
         return CreateUpdateTitleSerializer
 
->>>>>>> denis
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
