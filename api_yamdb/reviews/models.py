@@ -29,6 +29,7 @@ class User(AbstractUser):
         (MODERATOR, 'moderator'),
         (ADMIN, 'admin')
     )
+
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(
         'Роль пользователя',
@@ -63,7 +64,7 @@ class User(AbstractUser):
 
 class Categories(models.Model):
     name = models.CharField(
-        max_length=256,
+        max_length=255,
     )
 
     slug = models.SlugField(unique=True)

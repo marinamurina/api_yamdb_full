@@ -53,7 +53,6 @@ class CategoriesSerializer(serializers.ModelSerializer):
             'name',
             'slug',
         )
-        # lookup_field = ('name', 'slug')
 
 
 class GenresSerializer(serializers.ModelSerializer):
@@ -63,7 +62,6 @@ class GenresSerializer(serializers.ModelSerializer):
             'name',
             'slug',
         )
-        # lookup_field = ('name', 'slug')
 
 
 class ShowTitlesSerializer(serializers.ModelSerializer):
