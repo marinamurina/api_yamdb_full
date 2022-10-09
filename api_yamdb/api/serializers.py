@@ -126,10 +126,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
     token = serializers.CharField(max_length=255, read_only=True)
 """
 
+
 class RegisterSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True, required=True,)
-
 
     class Meta:
         model = User

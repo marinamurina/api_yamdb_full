@@ -27,6 +27,6 @@ router.register(r'v1/users', UserViewSet)
 
 urlpatterns = [
     path('v1/auth/signup/', RegisterAPIView.as_view()),
-    path('v1/auth/users/me',UserChangeAPIView.as_view()),
+    path('v1/auth/users/me', UserChangeAPIView.as_view()),
     path('', include(router.urls)),
 ]

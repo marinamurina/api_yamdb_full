@@ -26,6 +26,7 @@ ROLE_CHOICES = (
     (3, 'Admin'),
 )
 
+
 class CustomUserManager(UserManager):
     def _create_user(self, username, email, password, **extra_fields):
         """
@@ -61,7 +62,6 @@ class CustomUserManager(UserManager):
         return self._create_user(username, email, password, **extra_fields)
 
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     """
     An abstract base class implementing a fully featured User model with
@@ -81,14 +81,16 @@ class User(AbstractBaseUser, PermissionsMixin):
             'unique': _("A user with that username already exists."),
         },
     )
-    bio = models.TextField('Биография', blank=True,) 
+    bio = models.TextField('Биография', blank=True,)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=150, blank=True)
     email = models.EmailField(_('email address'), blank=False, unique=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
-        help_text=_('Designates whether the user can log into this admin site.'),
+        help_text=_(
+            'Designates whether the user can log into this admin site.'
+        ),
     )
     is_active = models.BooleanField(
         _('active'),
@@ -101,7 +103,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     objects = CustomUserManager()
-    email_verified=models.BooleanField(
+    email_verified = models.BooleanField(
         _('active'),
         default=False,
         help_text=_(
@@ -111,7 +113,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-
 
     @property
     def token(self):
