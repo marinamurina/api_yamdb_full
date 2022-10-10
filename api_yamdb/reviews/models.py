@@ -1,23 +1,9 @@
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import (
     AbstractUser
 )
-# from django.utils.translation import gettext_lazy as _
 from django.db import models
-
-
-SCORE_CHOICES = (
-    ('1', '1'),
-    ('2', '2'),
-    ('3', '3'),
-    ('4', '4'),
-    ('5', '5'),
-    ('6', '6'),
-    ('7', '7'),
-    ('8', '8'),
-    ('9', '9'),
-    ('10', '10'),
-)
 
 
 class User(AbstractUser):
@@ -118,10 +104,12 @@ class Review(models.Model):
         Title, on_delete=models.CASCADE,
         related_name='review'
     )
-    score = models.CharField(
-        max_length=2,
-        choices=SCORE_CHOICES,
-        default='1',
+    score = models.PositiveSmallIntegerField(
+        verbose_name='Рейтинг',
+        validators=[
+            MinValueValidator(1, 'Значение от 1 до 10'),
+            MaxValueValidator(10, 'Значение от 1 до 10')
+        ]
     )
     text = models.TextField()
     pub_date = models.DateTimeField(
