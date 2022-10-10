@@ -44,6 +44,8 @@ from .serializers import (
     TokenSerializer
 )
 
+from .filters import TitleFilter
+
 
 class CategoriesViewSet(ListCreateDestroyViewSet):
     queryset = Categories.objects.all()
@@ -67,6 +69,14 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = CreateUpdateTitleSerializer
     permission_classes = (AdminOrReadOnly,)
+    # filter_backends = (TitleFilter,)
+    """
+    search_fields = (
+        'name',
+        'year',
+        'genre',
+        'category',
+    )"""
 
     def get_serializer_class(self):
         """Переопределяем сериализатор для показа"""
