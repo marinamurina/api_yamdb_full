@@ -19,7 +19,8 @@ from .permissions import AdminOrReadOnly
 from rest_framework.decorators import action, api_view, permission_classes
 from django.conf import settings
 import uuid
-# from django.db import IntegrityError
+
+from .mixins import ListCreateDestroyViewSet
 
 from reviews.models import (
     Categories,
@@ -44,20 +45,22 @@ from .serializers import (
 )
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class CategoriesViewSet(ListCreateDestroyViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = 'slug'
 
 
-class GenresViewSet(viewsets.ModelViewSet):
+class GenresViewSet(ListCreateDestroyViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):
