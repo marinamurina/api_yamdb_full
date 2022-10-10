@@ -84,7 +84,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         title_id = self.kwargs.get('title_id')
         serializer.save(
             author=self.request.user,
-            title=get_object_or_404(Title, id=title_id)
+            title=title_id
         )
 
 
