@@ -34,14 +34,14 @@ class AdminOrReadOnly(permissions.BasePermission):
 
 
 class IsAdminModeratorOwnerOrReadOnly(permissions.BasePermission):
-    """Класс для предоставления прав доступа на создание/изменение
-    отзывов и комментариев только для владельцев контента,
+    """Класс для предоставления прав доступа на изменение
+    отзывов и комментариев для владельцев контента,
     администраторов, модераторов."""
 
     def has_permission(self, request, view):
         return (
             request.method in permissions.SAFE_METHODS
-            or request.user.is_authenticated
+            or request.user.is_user
         )
 
     def has_object_permission(self, request, view, obj):
@@ -49,8 +49,7 @@ class IsAdminModeratorOwnerOrReadOnly(permissions.BasePermission):
             request.method in permissions.SAFE_METHODS
             or request.user.is_admin
             or request.user.is_moderator
-            or obj.author == request.user
-        )
+            or obj.author == request.user)
 
 
 class IsAdmin(permissions.BasePermission):
