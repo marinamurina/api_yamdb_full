@@ -45,6 +45,7 @@ from .serializers import (
 )
 
 from .filters import TitleFilter
+from django_filters import rest_framework as myfilters
 
 
 class CategoriesViewSet(ListCreateDestroyViewSet):
@@ -69,14 +70,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = CreateUpdateTitleSerializer
     permission_classes = (AdminOrReadOnly,)
-    # filter_backends = (TitleFilter,)
-    """
-    search_fields = (
-        'name',
-        'year',
-        'genre',
-        'category',
-    )"""
+    filter_backends = (myfilters.DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         """Переопределяем сериализатор для показа"""
@@ -100,7 +95,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(
             author=self.request.user,
             title=get_object_or_404(Title, id=title_id)
-        
+
         )
 
 
