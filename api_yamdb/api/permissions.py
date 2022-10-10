@@ -1,16 +1,6 @@
 from rest_framework import permissions
 
 
-class AdminOrReadOnly(permissions.BasePermission):
-    """Класс для органичения прав на создание произведений, категорий
-    и жанров только администраторами."""
-
-    def has_permission(self, request, view):
-        return (request.method in permissions.SAFE_METHODS
-                or (request.user.is_authenticated and (
-                    request.user.is_admin or request.user.is_superuser)))
-
-
 class IsAdminModeratorOwnerOrReadOnly(permissions.BasePermission):
     """Класс для предоставления прав доступа на изменение
     отзывов и комментариев для владельцев контента,
@@ -19,7 +9,7 @@ class IsAdminModeratorOwnerOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return (
             request.method in permissions.SAFE_METHODS
-            or request.user.is_user
+            or request.user.is_authenticated
         )
 
     def has_object_permission(self, request, view, obj):
