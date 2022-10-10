@@ -6,15 +6,6 @@ class AdminOrReadOnly(permissions.BasePermission):
     и жанров только администраторами."""
 
     def has_permission(self, request, view):
-        """
-        return request.method in permissions.SAFE_METHODS
-
-    def has_object_permission(self, request, view, obj):
-        return (  # True
-            request.method in permissions.SAFE_METHODS
-            or User.objects.get(pk=request.user).role == 'admin'
-        )
-        """
         if request.user.is_authenticated:
             return (
                 request.method in permissions.SAFE_METHODS

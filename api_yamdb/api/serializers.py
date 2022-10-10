@@ -12,7 +12,7 @@ from reviews.models import (
     Genres,
     Title,
     User,
-    Review, 
+    Review,
     Comment,
 )
 

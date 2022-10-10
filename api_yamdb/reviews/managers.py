@@ -1,10 +1,17 @@
 from django.contrib.auth.base_user import BaseUserManager
 
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, username=None, email=None, phone=None,\
-        password=None, **extra_fields):
+    def _create_user(
+        self,
+        username=None,
+        email=None,
+        phone=None,
+        password=None,
+        **extra_fields
+    ):
         """
         Creates and saves a User with the given email and password.
         """
@@ -33,7 +40,7 @@ class UserManager(BaseUserManager):
                 phone=phone,
                 **extra_fields
             )
-        
+
         # проверяем является ли пользователь
         # суперпользователем
         if extra_fields.get('is_superuser'):
@@ -48,7 +55,12 @@ class UserManager(BaseUserManager):
 
     def create_user(self, username, email, password=None, **extra_fields):
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username=username, email=email, password=password, **extra_fields)
+        return self._create_user(
+            username=username,
+            email=email,
+            password=password,
+            **extra_fields
+        )
 
     def create_superuser(self, username, password, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
