@@ -19,11 +19,11 @@ from reviews.models import (
 
 class ReviewSerializer(serializers.ModelSerializer):
     title = SlugRelatedField(
-        slug_field='title',
+        slug_field='name',
         read_only=True,
     )
     author = SlugRelatedField(
-        slug_field='author',
+        slug_field='username',
         read_only=True,
     )
 
@@ -35,7 +35,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         if request.method == 'POST':
             if Review.objects.filter(
                 title=title, author=author
-            ).exists:
+            ).exists():
                 raise ValidationError(
                     'Вы можете добавить только один отзыв на произведение.'
                 )
@@ -43,14 +43,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = (
-            'id',
-            'author',
-            'title',
-            'score',
-            'text',
-            'pub_date'
-        )
+        fields = ('id', 'author', 'title', 'score', 'text','pub_date')
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -140,11 +133,11 @@ class CreateUpdateTitleSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     review = SlugRelatedField(
-        slug_field='review',
+        slug_field='text',
         read_only=True,
     )
     author = SlugRelatedField(
-        slug_field='author',
+        slug_field='username',
         read_only=True,
     )
 
