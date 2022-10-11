@@ -1,24 +1,19 @@
 from django.db.models import Avg
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
+from rest_framework.validators import UniqueValidator
 
-from reviews.models import (
-    Categories,
-    Genres,
-    Title,
-    User,
-    Review,
-    Comment,
-)
+from reviews.models import Categories, Comment, Genres, Review, Title, User
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    title = SlugRelatedField(
+    title = serializers.SlugRelatedField(
         slug_field='name',
         read_only=True,
     )
-    author = SlugRelatedField(
+    author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
     )
@@ -29,8 +24,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         title_id = self.context['view'].kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)
         if request.method == 'POST':
-            if Review.objects.filter(
-                title=title, author=author
+            if title.reviews.filter(
+                author=author
             ).exists():
                 raise ValidationError(
                     'Вы можете добавить только один отзыв на произведение.'
@@ -135,11 +130,11 @@ class CreateUpdateTitleSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    review = SlugRelatedField(
+    review = serializers.SlugRelatedField(
         slug_field='text',
         read_only=True,
     )
-    author = SlugRelatedField(
+    author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
     )
