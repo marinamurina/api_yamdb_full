@@ -1,8 +1,8 @@
 import csv
 
 from django.core.management.base import BaseCommand
-
 from reviews.models import Genres, Title, TitleGenres
+
 from api_yamdb.settings import IMPORT_DATA_ADRESS
 
 

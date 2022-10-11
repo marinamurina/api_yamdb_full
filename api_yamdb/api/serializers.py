@@ -1,20 +1,10 @@
-from rest_framework import serializers
-
 from django.db.models import Avg
-from rest_framework.validators import UniqueValidator
-
-from rest_framework.relations import SlugRelatedField
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-
-from reviews.models import (
-    Categories,
-    Genres,
-    Title,
-    User,
-    Review, 
-    Comment,
-)
+from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueValidator
+from reviews.models import Categories, Comment, Genres, Review, Title, User
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -91,7 +81,7 @@ class ShowTitlesSerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         """Подсчитываем средний рейтинг произведения из отзывов."""
         print(obj.category)
-        rating = obj.review.aggregate(Avg('score'))['score__avg']
+        rating = obj.reviews.aggregate(Avg('score'))['score__avg']
 
         if rating is not None:
             rating = int(rating)
@@ -130,7 +120,7 @@ class CreateUpdateTitleSerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         """Подсчитываем средний рейтинг произведения из отзывов."""
 
-        rating = obj.review.aggregate(Avg('score'))['score__avg']
+        rating = obj.reviews.aggregate(Avg('score'))['score__avg']
 
         if rating is not None:
             rating = int(rating)
