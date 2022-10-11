@@ -4,7 +4,7 @@ from django.contrib.auth.models import (
     AbstractUser
 )
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     USER = 'user'
@@ -19,7 +19,7 @@ class User(AbstractUser):
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(
         'Роль пользователя',
-        max_length=max([len(value) for role, value in ROLES]),
+        max_length=9,
         choices=ROLES, default=USER,
     )
     email = models.EmailField('Почта пользователя', unique=True)
