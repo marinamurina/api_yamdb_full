@@ -27,7 +27,8 @@ class AdminOrReadOnly(permissions.BasePermission):
 class IsAdminModeratorOwnerOrReadOnly(permissions.BasePermission):
     """Класс для предоставления прав доступа на изменение
     отзывов и комментариев для владельцев контента,
-    администраторов, модераторов."""
+    администраторов, модераторов.
+    """
 
     def has_permission(self, request, view):
         return (
