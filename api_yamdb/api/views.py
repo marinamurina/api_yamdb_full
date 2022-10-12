@@ -50,7 +50,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Переопределяем сериализатор для показа"""
-        if self.action == 'list' or self.action == 'retrieve':
+        if self.action in ['list', 'retrieve']:
             return ShowTitlesSerializer
 
         return CreateUpdateTitleSerializer

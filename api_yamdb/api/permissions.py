@@ -3,7 +3,8 @@ from rest_framework import permissions
 
 class AdminOrReadOnly(permissions.BasePermission):
     """Класс для органичения прав на создание произведений, категорий
-    и жанров только администраторами."""
+    и жанров только администраторами.
+    """
 
     def has_permission(self, request, view):
         if request.user.is_authenticated:

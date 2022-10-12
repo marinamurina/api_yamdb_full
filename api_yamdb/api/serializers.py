@@ -83,7 +83,7 @@ class ShowTitlesSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         """Подсчитываем средний рейтинг произведения из отзывов."""
-        print(obj.category)
+
         rating = obj.reviews.aggregate(Avg('score'))['score__avg']
 
         if rating is not None:
@@ -93,7 +93,6 @@ class ShowTitlesSerializer(serializers.ModelSerializer):
 
 
 class CreateUpdateTitleSerializer(serializers.ModelSerializer):
-    rating = serializers.SerializerMethodField()
 
     category = serializers.SlugRelatedField(
         slug_field='slug',
@@ -114,21 +113,10 @@ class CreateUpdateTitleSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'year',
-            'rating',
             'description',
             'genre',
             'category',
         )
-
-    def get_rating(self, obj):
-        """Подсчитываем средний рейтинг произведения из отзывов."""
-
-        rating = obj.reviews.aggregate(Avg('score'))['score__avg']
-
-        if rating is not None:
-            rating = int(rating)
-
-        return rating
 
 
 class CommentSerializer(serializers.ModelSerializer):
