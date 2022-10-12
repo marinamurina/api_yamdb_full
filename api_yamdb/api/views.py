@@ -1,51 +1,26 @@
-from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
-from rest_framework import status
-
-from rest_framework.permissions import AllowAny, IsAuthenticated
-
-from rest_framework.response import Response
-from rest_framework import viewsets
-from rest_framework import filters
-from rest_framework_simplejwt.tokens import RefreshToken
-# Свой клас для разделения доступа по ролям
-from .permissions import (
-    AdminOrReadOnly,
-    IsAdminModeratorOwnerOrReadOnly,
-    IsAdmin
-)
-
-from .permissions import AdminOrReadOnly
-from rest_framework.decorators import action, api_view, permission_classes
-from django.conf import settings
 import uuid
 
-from .mixins import ListCreateDestroyViewSet
-
-from reviews.models import (
-    Categories,
-    Genres,
-    Title,
-    Review,
-    Comment,
-    User,
-)
-
-from .serializers import (
-    CategoriesSerializer,
-    GenresSerializer,
-    ReviewSerializer,
-    ShowTitlesSerializer,
-    CreateUpdateTitleSerializer,
-    ReviewSerializer,
-    CommentSerializer,
-    UserSerializer,
-    RegisterSerializer,
-    TokenSerializer
-)
-
-from .filters import TitleFilter
+from django.conf import settings
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as myfilters
+
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from reviews.models import Categories, Comment, Genres, Review, Title, User
+from .filters import TitleFilter
+from .mixins import ListCreateDestroyViewSet
+from .permissions import (AdminOrReadOnly, IsAdmin,
+                          IsAdminModeratorOwnerOrReadOnly)
+from .serializers import (CategoriesSerializer, CommentSerializer,
+                          CreateUpdateTitleSerializer, GenresSerializer,
+                          RegisterSerializer, ReviewSerializer,
+                          ShowTitlesSerializer, TokenSerializer,
+                          UserSerializer)
 
 
 class CategoriesViewSet(ListCreateDestroyViewSet):

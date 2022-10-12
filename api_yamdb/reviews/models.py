@@ -1,8 +1,6 @@
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import (
-    AbstractUser
-)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -98,11 +96,11 @@ class TitleGenres(models.Model):
 class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name='review'
+        related_name='reviews'
     )
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE,
-        related_name='review'
+        related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
@@ -134,11 +132,11 @@ class Review(models.Model):
 class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name='comment'
+        related_name='comments'
     )
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE,
-        related_name='comment'
+        related_name='comments'
     )
     text = models.TextField()
     pub_date = models.DateTimeField(

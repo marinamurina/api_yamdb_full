@@ -3,8 +3,8 @@ import csv
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from reviews.models import Comment, User
 
-from reviews.models import User, Comment
 from api_yamdb.settings import IMPORT_DATA_ADRESS
 
 
