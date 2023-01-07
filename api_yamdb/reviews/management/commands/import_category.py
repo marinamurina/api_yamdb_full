@@ -1,5 +1,6 @@
 import csv
 
+from django.db import IntegrityError
 from django.core.management.base import BaseCommand
 from reviews.models import Categories
 
@@ -18,36 +19,23 @@ class Command(BaseCommand):
             dataReader = csv.DictReader(csv_file)
 
             for row in dataReader:
-                category = Categories()
-                category.id = row['id']
-                category.name = row['name']
-                category.slug = row['slug']
 
-                if Categories.objects.filter(id=category.id).exists():
-                    self.stdout.write(
-                        f'Категория с id {category.id}'
-                        f'уже существует в базе.'
+                try:
+                    category_name = row['name']
+
+                    Categories.objects.create(
+                        id=row['id'],
+                        name=row['name'],
+                        slug=row['slug']
                     )
 
-                elif Categories.objects.filter(name=category.name).exists():
+                except IntegrityError as err:
                     self.stdout.write(
-                        f'Категория с именем {category.name}'
-                        f'уже существует в базе.'
-                    )
-
-                elif Categories.objects.filter(slug=category.slug).exists():
-                    self.stdout.write(
-                        f'Категория со слагом {category.slug}'
-                        f'уже существует в базе.'
+                        f'Категория {category_name} уже внесена в базу. '
+                        f'Ошибка внесения - {err}'
                     )
 
                 else:
-                    category = Categories()
-                    category.id = row['id']
-                    category.name = row['name']
-                    category.slug = row['slug']
-                    category.save()
-
                     self.stdout.write(
-                        f'Категория {category.name} внесена в базу.'
+                        f'Категория {category_name} внесена в базу.'
                     )
