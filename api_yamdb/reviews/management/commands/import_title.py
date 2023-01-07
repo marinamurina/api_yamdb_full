@@ -1,7 +1,7 @@
 import csv
 
+from django.db import IntegrityError
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from reviews.models import Categories, Title
 
@@ -20,42 +20,26 @@ class Command(BaseCommand):
             dataReader = csv.DictReader(csv_file)
 
             for row in dataReader:
-                title = Title()
-                title.id = row['id']
-                title.name = row['name']
-                title.year = row['year']
-                title.category = get_object_or_404(
-                    Categories, id=row['category']
-                )
 
-                criterion1 = Q(name=title.name)
-                criterion2 = Q(category=title.category)
-                criterion3 = Q(year=title.year)
+                try:
+                    title_name = row['name']
 
-                if Title.objects.filter(id=title.id).exists():
-                    self.stdout.write(
-                        f'Произведение с id {title.id}'
-                        f' уже существует в базе.'
+                    Title.objects.create(
+                        id=row['id'],
+                        name=row['name'],
+                        year=row['year'],
+                        category=get_object_or_404(
+                            Categories, id=row['category']
+                        )
                     )
 
-                elif Title.objects.filter(
-                    criterion1 & criterion2 & criterion3
-                ).exists():
+                except IntegrityError as err:
                     self.stdout.write(
-                        f'Произведение {title.name} {title.year} года'
-                        f' уже существует в этой категории.'
+                        f'Произведение "{title_name}" уже внесено в базу. '
+                        f'Ошибка внесения - {err}'
                     )
 
                 else:
-                    title = Title()
-                    title.id = row['id']
-                    title.name = row['name']
-                    title.year = row['year']
-                    title.category = get_object_or_404(
-                        Categories, id=row['category']
-                    )
-                    title.save()
-
                     self.stdout.write(
-                        f'Произведение {title.name} внесено в базу.'
+                        f'Произведение "{title_name}" внесено в базу.'
                     )
