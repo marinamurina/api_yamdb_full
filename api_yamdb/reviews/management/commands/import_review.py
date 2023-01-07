@@ -1,9 +1,9 @@
 import csv
 
+from django.db import IntegrityError
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from reviews.models import Review, User
+from reviews.models import Review, User, Title
 
 from api_yamdb.settings import IMPORT_DATA_ADRESS
 
@@ -20,41 +20,30 @@ class Command(BaseCommand):
             dataReader = csv.DictReader(csv_file)
 
             for row in dataReader:
-                review = Review()
-                review.id = row['id']
-                review.title_id = row['title_id']
-                review.author = get_object_or_404(User, id=row['author'])
 
-                criterion1 = Q(title_id=review.title_id)
-                criterion2 = Q(author=review.author)
+                try:
+                    review_id = row['id']
 
-                if Review.objects.filter(id=review.id).exists():
-                    self.stdout.write(
-                        f'Рецензия с id {review.id}'
-                        f' уже существует в базе.'
+                    Review.objects.create(
+                        id=row['id'],
+                        title=get_object_or_404(
+                            Title, id=row['title_id']
+                        ),
+                        text=row['text'],
+                        author=get_object_or_404(
+                            User, id=row['author']
+                        ),
+                        score=row['score'],
+                        pub_date=row['pub_date']
                     )
 
-                elif Review.objects.filter(
-                    criterion1 & criterion2
-                ).exists():
+                except IntegrityError as err:
                     self.stdout.write(
-                        f'Рецензия юзера {review.author.username}'
-                        f' на произведение {review.title.name}'
-                        f' уже существует в базе.'
+                        f'Рецензия с id {review_id} уже внесена в базу. '
+                        f'Ошибка внесения - {err}'
                     )
 
                 else:
-                    review = Review()
-                    review.id = row['id']
-                    review.title_id = row['title_id']
-                    review.text = row['text']
-                    review.author = get_object_or_404(
-                        User, id=row['author']
-                    )
-                    review.score = row['score']
-                    review.pub_date = row['pub_date']
-                    review.save()
-
                     self.stdout.write(
-                        f'Рецензия с id {review.id} внесена в базу.'
+                        f'Рецензия с id {review_id} внесена в базу.'
                     )
