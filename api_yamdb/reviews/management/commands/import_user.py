@@ -1,5 +1,6 @@
 import csv
 
+from django.db import IntegrityError
 from django.core.management.base import BaseCommand
 from reviews.models import User
 
@@ -18,38 +19,28 @@ class Command(BaseCommand):
             dataReader = csv.DictReader(csv_file)
 
             for row in dataReader:
-                user = User()
-                user.id = row['id']
-                user.username = row['username']
-                user.email = row['email']
 
-                if User.objects.filter(id=user.id).exists():
-                    self.stdout.write(
-                        f'Юзер с id {user.id} уже существует в базе.'
+                try:
+                    user_id = row['id']
+
+                    User.objects.create(
+                        id=row['id'],
+                        username=row['username'],
+                        email=row['email'],
+                        role=row['role'],
+                        bio=row['bio'],
+                        first_name=row['first_name'],
+                        last_name=row['last_name'],
+                        confirmation_code=row['confirmation_code'],
                     )
 
-                elif User.objects.filter(username=user.username).exists():
+                except IntegrityError as err:
                     self.stdout.write(
-                        f'Юзер c юзернеймом {user.username}'
-                        f' уже существует в базе.'
-                    )
-
-                elif User.objects.filter(email=user.email).exists():
-                    self.stdout.write(
-                        f'Юзер с адресом {user.email}'
-                        f' уже существует в базе.'
+                        f'Юзер с id {user_id} уже внесен в базу. '
+                        f'Ошибка внесения - {err}'
                     )
 
                 else:
-                    user = User()
-                    user.id = row['id']
-                    user.username = row['username']
-                    user.email = row['email']
-                    user.role = row['role']
-                    user.bio = row['bio']
-                    user.first_name = row['first_name']
-                    user.last_name = row['last_name']
-                    user.confirmation_code = ['confirmation_code']
-                    user.save()
-
-                    self.stdout.write(f'Юзер {user.username} внесен в базу.')
+                    self.stdout.write(
+                        f'Юзер с id {user_id} внесен в базу.'
+                    )
