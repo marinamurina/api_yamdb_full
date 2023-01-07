@@ -1,9 +1,9 @@
 import csv
 
 from django.core.management.base import BaseCommand
-from django.db.models import Q
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from reviews.models import Comment, User
+from reviews.models import Comment, User, Review
 
 from api_yamdb.settings import IMPORT_DATA_ADRESS
 
@@ -20,40 +20,28 @@ class Command(BaseCommand):
             dataReader = csv.DictReader(csv_file)
 
             for row in dataReader:
-                comment = Comment()
-                comment.id = row['id']
-                comment.review_id = row['review_id']
-                comment.text = row['text']
-                comment.author = get_object_or_404(User, id=row['author'])
 
-                criterion1 = Q(review_id=comment.review_id)
-                criterion2 = Q(author=comment.author)
-                criterion2 = Q(text=comment.text)
+                try:
+                    comment_id = row['id']
 
-                if Comment.objects.filter(id=comment.id).exists():
-                    self.stdout.write(
-                        f'Комментарий с id {comment.id}'
-                        f' уже существует в базе.'
+                    Comment.objects.create(
+                        id=row['id'],
+                        review=get_object_or_404(
+                            Review, id=row['review_id']
+                        ),
+                        text=row['text'],
+                        author=get_object_or_404(
+                            User, id=row['author']
+                        )
                     )
 
-                elif Comment.objects.filter(
-                    criterion1 & criterion2 & criterion2
-                ).exists():
+                except IntegrityError as err:
                     self.stdout.write(
-                        f'Комментарий юзера {comment.author.username}'
-                        f' на рецензию id {comment.review.id}'
-                        f' c текстом "{comment.text}" уже существует в базе.'
+                        f'Комментарий c id {comment_id} уже внесен в базу. '
+                        f'Ошибка внесения - {err}'
                     )
 
                 else:
-                    comment = Comment()
-                    comment.id = row['id']
-                    comment.review_id = row['review_id']
-                    comment.text = row['text']
-                    comment.author = get_object_or_404(User, id=row['author'])
-                    comment.pub_date = row['pub_date']
-                    comment.save()
-
                     self.stdout.write(
-                        f'Комментарий с id {comment.id} внесен в базу.'
+                        f'Комментарий c id {comment_id} внесен в базу.'
                     )
