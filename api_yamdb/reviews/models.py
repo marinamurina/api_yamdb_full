@@ -49,6 +49,7 @@ class User(AbstractUser):
 class Categories(models.Model):
     name = models.CharField(
         max_length=255,
+        unique=True
     )
 
     slug = models.SlugField(unique=True)
@@ -57,6 +58,7 @@ class Categories(models.Model):
 class Genres(models.Model):
     name = models.CharField(
         max_length=255,
+        unique=True
     )
 
     slug = models.SlugField(unique=True)
