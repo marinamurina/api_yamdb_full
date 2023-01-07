@@ -1,5 +1,6 @@
 import csv
 
+from django.db import IntegrityError
 from django.core.management.base import BaseCommand
 from reviews.models import Genres
 
@@ -18,35 +19,23 @@ class Command(BaseCommand):
             dataReader = csv.DictReader(csv_file)
 
             for row in dataReader:
-                genre = Genres()
-                genre.id = row['id']
-                genre.name = row['name']
-                genre.slug = row['slug']
 
-                if Genres.objects.filter(id=genre.id).exists():
-                    self.stdout.write(
-                        f'Жанр с id {genre.id} уже существует в базе.'
+                try:
+                    genre_name = row['name']
+
+                    Genres.objects.create(
+                        id=row['id'],
+                        name=row['name'],
+                        slug=row['slug'],
                     )
 
-                elif Genres.objects.filter(name=genre.name).exists():
+                except IntegrityError as err:
                     self.stdout.write(
-                        f'Жанр c именем {genre.name}'
-                        f' уже существует в базе.'
-                    )
-
-                elif Genres.objects.filter(slug=genre.slug).exists():
-                    self.stdout.write(
-                        f'Жанр со слагом {genre.slug}'
-                        f' уже существует в базе.'
+                        f'Жанр {genre_name} уже внесен в базу. '
+                        f'Ошибка внесения - {err}'
                     )
 
                 else:
-                    genre = Genres()
-                    genre.id = row['id']
-                    genre.name = row['name']
-                    genre.slug = row['slug']
-                    genre.save()
-
                     self.stdout.write(
-                        f'Жанр {genre.name} внесен в базу.'
+                        f'Жанр {genre_name} внесен в базу.'
                     )
