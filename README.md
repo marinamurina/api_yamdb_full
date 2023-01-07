@@ -10,7 +10,7 @@
 Добавлять отзывы, комментарии и ставить оценки могут только аутентифицированные пользователи.
 
 ## Установка
-* склонируйте репозиторий https://github.com/DenisChesnokov/api_yamdb
+* склонируйте репозиторий
 * в папке проекта создайте и активируйте виртуальное окружение:
     * cd api_yamdb
     * python3 -m venv venv
@@ -39,7 +39,9 @@ import_user, import_category, import_genre, import_title, import_genre_title, im
 ## Участники
 Тимлид: 
     Денис Чесноков https://github.com/DenisChesnokov
+    
 Модель и регистрация пользователя:
     Егор Кляц https://github.com/HoneyKnight
+    
 Модели отзывок и коментариев, а так же заполнение БД:
     Марина Мурина https://github.com/marinamurina
